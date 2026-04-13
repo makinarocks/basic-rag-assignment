@@ -1,7 +1,7 @@
 # LangChain-Step-By-Step
 
 This repository is a step-by-step onboarding assignment for learning how to build LLM applications with LangChain and OpenAI.
-Interns should implement `step_1.py` through `step_5.py` in order and finish with a small AI assistant that can handle both **external RAG dataset lookup and general conversation**.
+Interns should implement `step_1.py` through `step_6.py` in order and finish with a small AI assistant that can handle both **external RAG dataset lookup and general conversation**.
 
 > This assignment assumes **Python 3.11+** or higher, **LangChain v1**, and an **OpenAI API key**.
 > For Step 2, the assignment uses the more modern `ChatPromptTemplate + MessagesPlaceholder` pattern instead of the older `ConversationChain` style.
