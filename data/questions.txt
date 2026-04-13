@@ -1,0 +1,4 @@
+Introduce yourself in one sentence.
+What is the first concept a beginner should learn in LangChain?
+What are two things to watch out for when building a program that reads multiple questions from a file and answers them?
+Give me a short motivational line for today.
