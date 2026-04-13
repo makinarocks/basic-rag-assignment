@@ -24,6 +24,7 @@ These are the official references that are most useful for implementing the assi
 
 ## Chroma
 
+- Chroma official website: https://www.trychroma.com/
 - Chroma CLI install: https://docs.trychroma.com/cli/install
 
 ## Notes

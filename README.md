@@ -9,7 +9,7 @@ Interns should implement `step_1.py` through `step_5.py` in order and finish wit
 ## Learning Goals
 
 - Safely manage `.env` files and API keys
-- Run basic LLM calls with `ChatOpenAI`
+- Run basic LLM calls with [`ChatOpenAI`](https://reference.langchain.com/python/langchain-openai/chat_models/base/ChatOpenAI)
 - Feed conversation history back into prompts
 - Build a simple RAG workflow using a Hugging Face dataset
 - Structure LLM outputs with Pydantic
@@ -22,7 +22,6 @@ Interns should implement `step_1.py` through `step_5.py` in order and finish wit
 ├── data/
 │   └── questions.txt
 ├── docs/
-│   ├── chroma-quickstart.md
 │   ├── official-references.md
 │   └── reviewer-rubric.md
 ├── outputs/
@@ -202,7 +201,9 @@ python step_4.py
   ```
 - Use `persist_directory` if you want a local persistent DB.
 - If you want to try a local server flow, install the Chroma CLI and run `chroma run`.
-- See `docs/chroma-quickstart.md` for a short guide.
+- For installation details and the latest setup instructions, refer to the official Chroma website and docs:
+  - https://www.trychroma.com/
+  - https://docs.trychroma.com/
 
 ---
 
