@@ -2,7 +2,7 @@
 
 Goal
 - Produce a validated structured result instead of free-form text.
-- Define a Pydantic model with `intent`, `priority`, and `answer`.
+- Define a Pydantic model with `intent` and `answer`.
 - Consider parse failure cases.
 """
 
@@ -15,7 +15,6 @@ class ClassifiedResponse(BaseModel):
     """Schema for the LLM response."""
 
     intent: str = Field(description="One of: question, greeting, request")
-    priority: int = Field(ge=1, le=5, description="1 is low priority, 5 is very high priority")
     answer: str = Field(description="The final answer shown to the user")
 
 

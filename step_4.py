@@ -6,9 +6,8 @@ Goal
 - Find relevant context for `test` split questions and answer them.
 
 Notes
-- The base assignment can start without a vector database.
-- Simple methods like keyword overlap or string matching are acceptable for context selection.
-- A Chroma-based vector search version can be added as bonus work.
+- A Vector DB (e.g., Chroma) is required.
+- You must embed `train[:200]` contexts and insert them into the Vector DB.
 """
 
 from __future__ import annotations

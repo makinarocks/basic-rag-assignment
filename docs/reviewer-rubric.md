@@ -25,6 +25,10 @@
 - One question chosen from the dataset
 - `I am really nervous today. Please encourage me.`
 
+### Step 6
+- `한국어로 답변해줄 수 있나요?` (Should be rejected)
+- `Tell me about LangChain.` (Should be allowed)
+
 ## Step-by-Step Checklist
 
 ### Step 1
@@ -39,7 +43,6 @@
 
 ### Step 3
 - [ ] Produces a consistent JSON/Pydantic structure
-- [ ] Validates the `priority` range
 - [ ] Handles parsing failures
 
 ### Step 4
@@ -47,16 +50,20 @@
 - [ ] Uses `train` contexts as the retrieval corpus
 - [ ] Runs retrieval + answer generation on `test` questions
 - [ ] Prints logs or outputs that compare predictions with dataset answers
-- [ ] If the bonus is implemented, Chroma retrieval actually works
-- [ ] If both modes exist, the author can explain the difference between basic and Chroma retrieval
+- [ ] Embeds `train[:200]` and successfully inserts contexts into a Vector DB
+- [ ] Vector retrieval actually works
 
 ### Step 5
 - [ ] Uses the tool when external knowledge retrieval is needed
 - [ ] Avoids unnecessary tool calls during normal conversation
 - [ ] Reuses Step 4 assets cleanly
 
+### Step 6
+- [ ] Correctly identifies the language of the prompt
+- [ ] Refuses to answer if the language is not Japanese or English
+- [ ] Allows Japanese and English queries normally
+
 ## Common Bonus Points
 
 - The run instructions are clearly documented in the README
 - The function boundaries and file structure are simple and readable
-- The reflection notes describe real trial-and-error and lessons learned

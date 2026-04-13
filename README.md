@@ -3,7 +3,7 @@
 This repository is a step-by-step onboarding assignment for learning how to build LLM applications with LangChain and OpenAI.
 Interns should implement `step_1.py` through `step_5.py` in order and finish with a small AI assistant that can handle both **external RAG dataset lookup and general conversation**.
 
-> This assignment assumes **Python 3.11+**, **LangChain v1**, and an **OpenAI API key**.
+> This assignment assumes **Python 3.11+** or higher, **LangChain v1**, and an **OpenAI API key**.
 > For Step 2, the assignment uses the more modern `ChatPromptTemplate + MessagesPlaceholder` pattern instead of the older `ConversationChain` style.
 
 ## Learning Goals
@@ -22,7 +22,6 @@ Interns should implement `step_1.py` through `step_5.py` in order and finish wit
 ├── data/
 │   └── questions.txt
 ├── docs/
-│   ├── official-references.md
 │   └── reviewer-rubric.md
 ├── outputs/
 │   └── .gitkeep
@@ -32,16 +31,21 @@ Interns should implement `step_1.py` through `step_5.py` in order and finish wit
 ├── step_2.py
 ├── step_3.py
 ├── step_4.py
-└── step_5.py
+├── step_5.py
+└── step_6.py
 ```
 
 ## Getting Started
 
 1. Fork or clone this repository.
-2. Create a virtual environment.
+2. Create a virtual environment (you can set up your development environment in any way you prefer). Make sure to use Python 3.11 or higher.
    ```bash
-   python -m venv .venv
+   python3.11 -m venv .venv
    source .venv/bin/activate
+   ```
+   To deactivate the virtual environment later, run:
+   ```bash
+   deactivate
    ```
 3. Install dependencies.
    ```bash
@@ -56,9 +60,8 @@ Interns should implement `step_1.py` through `step_5.py` in order and finish wit
 ## Assignment Rules
 
 - Each step should **extend the result of the previous step**.
-- Run each step yourself and leave a short note in the **reflection section** at the bottom of `README.md`.
-- If you get stuck, read the official docs first, and mention which docs helped you in your reflection.
-- Open a Pull Request after completing Step 5.
+- If you get stuck, read the official docs first.
+- Open a Pull Request after completing Step 6.
 
 ## Step Overview
 
@@ -66,9 +69,10 @@ Interns should implement `step_1.py` through `step_5.py` in order and finish wit
 | --- | --- | --- | --- |
 | 1 | Basic Setup | Read `questions.txt`, generate answers, and save them to `outputs/step_1_output.txt` | API integration, file I/O |
 | 2 | Conversation Memory | Build a chatbot that remembers earlier turns | Name/context retention |
-| 3 | Structured Output | Return `intent`, `priority`, and `answer` as JSON/Pydantic | Output parsing, validation |
-| 4 | Simple RAG | Build dataset-based QA with `neural-bridge/rag-dataset-12000` | Dataset loading, context retrieval, answer generation, optional Chroma bonus |
-| 5 | Final Agent | Build an assistant that decides when dataset lookup is needed | Tools, agent flow, reuse |
+| 3 | Structured Output | Return `intent` and `answer` as JSON/Pydantic | Output parsing, validation |
+| 4 | Simple RAG | Build dataset-based QA with `neural-bridge/rag-dataset-12000` | Dataset loading, Vector DB insertion, context retrieval, answer generation |
+| 5 | Final Agent | Build an assistant that connects with the Vector DB to answer dataset questions | Tools, agent flow, reuse |
+| 6 | Language Filter | Detect language and refuse to answer if not Japanese or English | Guardrails, prompt engineering or routing |
 
 ---
 
@@ -83,17 +87,6 @@ Interns should implement `step_1.py` through `step_5.py` in order and finish wit
 - Read the API key from `.env`
 - Ignore empty lines
 - Overwrite the output file on each run
-
-**Suggested Function Split**
-- `load_questions()`
-- `build_llm()`
-- `answer_questions()`
-- `save_answers()`
-
-**Run Example**
-```bash
-python step_1.py
-```
 
 ---
 
@@ -114,10 +107,6 @@ python step_1.py
 - In modern LangChain flows, `ChatPromptTemplate + MessagesPlaceholder` is more instructive than the legacy `ConversationChain` pattern.
 - Managing `history` as a list is perfectly fine for this assignment.
 
-**Run Example**
-```bash
-python step_2.py
-```
 
 ---
 
@@ -129,27 +118,21 @@ python step_2.py
 ```json
 {
   "intent": "question | greeting | request",
-  "priority": 1,
   "answer": "..."
 }
 ```
 
 **Required**
 - Use `PydanticOutputParser` or an equivalent explicit schema validation flow
-- Restrict `priority` to the range 1 to 5
 - Handle parse failures with retries or explicit error handling
 
-**Run Example**
-```bash
-python step_3.py
-```
 
 ---
 
 ## Step 4 — External Data with Simple RAG
 
 **Mission**
-- Use the Hugging Face dataset `neural-bridge/rag-dataset-12000` to build a simple RAG pipeline.
+- Use the Hugging Face dataset [`neural-bridge/rag-dataset-12000`](https://huggingface.co/datasets/neural-bridge/rag-dataset-12000) to build a simple RAG pipeline.
 - Use the dataset's `context`, `question`, and `answer` fields to implement a retrieval + answer generation flow.
 - At minimum, run retrieval-based answering on a few `test` questions and compare your output with the provided answers.
 
@@ -159,43 +142,24 @@ python step_3.py
 - Pick a few `test` split questions and run retrieval + generation on them
 - Only place relevant context or chunks into the prompt
 
-**Base Implementation (Required)**
-- You may implement this step without a vector database.
-- For example, keyword matching, simple scoring, or rule-based top-k retrieval is acceptable.
-- Because the dataset is large, it is fine to start with a small subset like `train[:200]` and `test[:20]`.
+**Vector DB Implementation (Required)**
+- A Vector DB (e.g., Chroma) is required for retrieval.
+- Extract the `context` from exactly `train[:200]` and convert them into `Document` objects.
+- Create embeddings and store them in a Vector DB collection.
 - If the retrieved context is not enough to answer, say that the answer could not be verified from the context.
-
-**Bonus Implementation (Optional)**
-- Add a Chroma-based vector search version for bonus credit.
-- Suggested flow:
-  1. Convert `train` split `context` entries into `Document` objects
-  2. Create embeddings with `OpenAIEmbeddings`
-  3. Store them in a Chroma collection
-  4. Retrieve relevant context with `similarity_search` or a retriever
-  5. Generate the answer using the retrieved results
-- If you implement both the base and Chroma versions, state in the README which one is the default.
 
 **Suggested Implementation Order**
 1. Load the dataset with `load_dataset()`
-2. Slice the `train` and `test` subsets
-3. Prepare the `train` contexts as searchable units
-4. Retrieve relevant context for each `test` question
+2. Slice the dataset to `train[:200]` and `test[:20]`
+3. Convert `train[:200]` contexts into `Document` objects and store them in a Vector DB via embeddings
+4. Retrieve relevant context using similarity search for each `test` question
 5. Insert the retrieved context into the prompt and generate an answer
 6. Compare your result with the dataset `answer` or log the differences
 
-**Optional CLI Ideas**
-- `--mode basic` for non-vector retrieval
-- `--mode chroma` for Chroma-based retrieval
-- `--split train[:200] --eval-split test[:20]` to control subset sizes
-- Briefly compare the two modes in your README reflection
 
-**Run Example**
-```bash
-python step_4.py
-```
 
 **Short Chroma Guide**
-- Optionally install these packages in your local Python environment:
+- Install these packages in your local Python environment:
   ```bash
   pip install langchain-chroma chromadb
   ```
@@ -210,9 +174,10 @@ python step_4.py
 ## Step 5 — Autonomous Assistant
 
 **Mission**
-- If a user question needs external knowledge retrieval, use the Step 4 dataset lookup tool.
+- Integrate with the Vector DB from Step 4.
+- If a user question needs external knowledge retrieval, use the Vector DB lookup tool.
 - If it is general conversation, let the LLM answer directly.
-- In other words, let the LLM decide whether it should use a tool.
+- In other words, let the LLM decide whether it should use the retrieval tool.
 
 **Required**
 - Define at least one tool
@@ -221,42 +186,25 @@ python step_4.py
   - one question selected from the dataset
   - one general conversation prompt
 
-**Run Example**
-```bash
-python step_5.py
-```
+---
+
+## Step 6 — Language Routing / Filtering
+
+**Mission**
+- Add a guardrail that detects the language of the user's input before answering.
+- If the question is **not** in Japanese (**日本語**) or English (**English**), the assistant must decline to answer (e.g., "I can only answer in Japanese or English.").
+- This rule applies to both general conversation and dataset questions.
+
+**Required**
+- Use LangChain routing mechanisms or direct prompt engineering to filter based on language.
+- Demo an allowed language query and a blocked language query (e.g., Korean, Spanish).
+
 
 ---
 
 ## Submission Guide
 
-Include the following in your Pull Request.
+- **Open a Pull Request** to track and submit your progress.
+- In your PR description, briefly include what you implemented in each step.
+- **AI Coding Tools:** You are completely free to use AI coding tools (such as Antigravity, Claude Code, etc.) for this assignment. If you need a license or support for any specific AI coding tool, please let us know and we will provide it for you.
 
-- What you implemented in each step
-- What blocked you and how you resolved it
-- Which dataset split/subset you used in Steps 4 and 5
-- Which Step 5 demo questions you used
-- One or two things you would improve next
-
-## Evaluation Criteria
-
-- **Correctness:** Did you satisfy the requirements?
-- **Understanding:** Can you explain why you chose this structure?
-- **Code quality:** Are function boundaries, naming, comments, and exception handling reasonable?
-- **Extensibility:** Do Steps 3–5 evolve naturally rather than feeling forced?
-
-## Reflection Template
-
-Copy the template below and paste it at the bottom of the README.
-
-```md
-## Step 1 Reflection
-- What I implemented:
-- What was difficult:
-- Docs I used:
-
-## Step 2 Reflection
-- What I implemented:
-- What was difficult:
-- Docs I used:
-```
